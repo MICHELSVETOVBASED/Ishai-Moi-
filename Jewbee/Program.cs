@@ -1,40 +1,27 @@
 ﻿using System.Net;
 using System.Collections.Generic;
 using System.Runtime.ExceptionServices;
+using System.IO;
 
 class Program{
     static void Main(string[] args){
-        Process();
+        
     }
-    public static void Process()
-    {
-        try{
-            NoobCoders.ProcessData();
-        }
-        catch (OperationCanceledException)
-        {
-            throw;
-        }
-        catch (InvalidOperationException e) when (e.Message.Contains("This error should not be re-thrown"))
-        {
-            Console.WriteLine(e.Message);
-        }
-        catch (InvalidOperationException e)
-        {
-            Console.WriteLine(e.Message);
-            ExceptionDispatchInfo.Capture(e).Throw();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.Message);
-            ExceptionDispatchInfo.Capture(e).Throw();
-        }
-    }
-}
 
-class NoobCoders{
-    public static int ProcessData(){
-        Queue<int> numbers = new Queue<int>();
-        return numbers.Dequeue();
+    public class MainClass
+    {    
+        private static readonly string[] filmGenres =
+        {
+            "Детектив", "Комедия", "Триллер",
+            "Научная фантастика", "Документальный",
+            "Ужасы", "Фэнтези", "Боевик",
+            "Мультфильм", "Приключения",
+            "Криминал", "Мюзикл","Проверьте корректность ввода"
+        };
+
+        public static void PrintGenre(){
+
+            Console.WriteLine(filmGenres[int.TryParse(Console.ReadLine(), out int result) && result <12 ? result : 12]);
+        }
     }
 }
