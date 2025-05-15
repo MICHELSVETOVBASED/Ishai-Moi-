@@ -36,16 +36,20 @@ class Program{
             if (ex.Message == "Cannot insert duplicated value"){
                 throw new InvalidOperationException("The user already added");
             }
-
             throw; // пробрасываем другие исключения выше
         }
         catch (NullReferenceException ex){
-            Console.WriteLine(ex.Message);
-            throw;
+            Console.WriteLine("Internal error occurred. Retrying...");
+            try {
+                user = dbContext.CreateUser(name, email);
+            }
+            catch {
+                throw; // если вторая попытка тоже не удалась, пробрасываем исключение
+            }
         }
         catch (UnauthorizedAccessException ex){
             Console.WriteLine(ex.Message);
-            throw;
+            throw;//
         }
         finally{
             dbContext.Dispose();
