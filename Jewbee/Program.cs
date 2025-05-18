@@ -49,7 +49,7 @@ class Program{
         }
         catch (UnauthorizedAccessException ex){
             Console.WriteLine(ex.Message);
-            throw;//mod
+            throw;//modmod
         }
         finally{
             dbContext.Dispose();
