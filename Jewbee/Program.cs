@@ -12,6 +12,12 @@ class Program{
     static void Main(string[] args){
         
     }
+    public static int CountOccurences(string input, string searchPattern){
+        if ((new string[]{ input, searchPattern }.Any(x => x == null))){
+            throw new ArgumentException("Value cannot be null");
+        }
+        return 0;
+    }
 
     public static NoobCodersUser CreateUser(string name, string email){
         // доработайте этот метод, добавив валидацию входных данных,
