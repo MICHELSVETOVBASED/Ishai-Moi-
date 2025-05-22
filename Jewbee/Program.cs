@@ -15,7 +15,7 @@ class Program{
     }
     public static int CountOccurences(string input, string searchPattern){
         /*if ((new string[]{ input, searchPattern }.Any(x => x == null))){
-            throw new ArgumentException("Value cannot be null");
+            throw new ArgumentException("Value cannot be null");//
         }*/
         try{
             ArgumentNullException.ThrowIfNull(input, nameof(input));
