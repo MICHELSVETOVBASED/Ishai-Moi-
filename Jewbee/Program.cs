@@ -10,13 +10,58 @@ using Microsoft.SqlServer.Server;
 namespace Jewbee;
 class Program{
     static void Main(string[] args){
-        
+        Console.WriteLine(CountOccurences("abbcdgeabb", "abb"));
+
     }
     public static int CountOccurences(string input, string searchPattern){
-        if ((new string[]{ input, searchPattern }.Any(x => x == null))){
+        /*if ((new string[]{ input, searchPattern }.Any(x => x == null))){
             throw new ArgumentException("Value cannot be null");
+        }*/
+        try{
+            ArgumentNullException.ThrowIfNull(input, nameof(input));
+            ArgumentNullException.ThrowIfNull(searchPattern, nameof(searchPattern));
         }
-        return 0;
+        catch (ArgumentNullException){
+            throw new ArgumentNullException("Value cannot be null");
+        }
+
+        if (new string[]{ input, searchPattern }.Any(x => x == "")){
+            throw new ArgumentException("Value cannot be empty");
+        }
+
+        if (searchPattern.Length > input.Length)
+            throw new InvalidOperationException("Search pattern can not be longer than input");
+        
+        
+        int result = 0;
+        for (int i = 0; i < input.Length; i++){
+            for (int j = 0; j < searchPattern.Length && j < input.Length && i <input.Length; j++){
+                if (input[i] == searchPattern[j]){
+                    i++;
+                    if (i<input.Length && searchPattern.Length >= 2 && input[i] == searchPattern[^1] && searchPattern[^1] != searchPattern[^2]){
+                        result++;
+                        for (int ii = i; ii < input.Length; ii++){
+                            for (int jj = 0; jj < searchPattern.Length && jj < input.Length && ii < input.Length; j++){
+                                if (input[ii] == searchPattern[jj]){
+                                    ii++;
+                                    if (input[ii] == searchPattern[^1] && ii < input.Length){
+                                        throw new InvalidOperationException(
+                                            "Value should not be intersected with itself");
+                                    }
+                                }
+                                else{
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        return result;
+        
     }
 
     public static NoobCodersUser CreateUser(string name, string email){
@@ -34,7 +79,7 @@ class Program{
         }
 
         var dbContext = NoobCodersDatabase.CreateContext();
-        NoobCodersUser user = null;
+        NoobCodersUser user;
         try{
             user = dbContext.CreateUser(name, email);
         }
@@ -44,7 +89,7 @@ class Program{
             }
             throw; // пробрасываем другие исключения выше
         }
-        catch (NullReferenceException ex){
+        catch (NullReferenceException){
             Console.WriteLine("Internal error occurred. Retrying...");
             try {
                 user = dbContext.CreateUser(name, email);
