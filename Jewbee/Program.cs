@@ -1,16 +1,18 @@
 ﻿using System.Net;
 using System.Collections.Generic;
+using System.Data;
 using System.Runtime.ExceptionServices;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Data.SqlTypes;
 using System.Data.SqlClient;
+using System.Reflection.Emit;
 using Microsoft.SqlServer.Server;
 
 namespace Jewbee;
 class Program{
     static void Main(string[] args){
-        Console.WriteLine(CountOccurences("abbcdgeabb", "abb"));
+        Console.WriteLine(CountOccurences("abbcaaageabb", "aaa"));
 
     }
     public static int CountOccurences(string input, string searchPattern){
@@ -37,26 +39,46 @@ class Program{
         for (int i = 0; i < input.Length; i++){
             for (int j = 0; j < searchPattern.Length && j < input.Length && i <input.Length; j++){
                 if (input[i] == searchPattern[j]){
-                    i++;
-                    if (i<input.Length && searchPattern.Length >= 2 && input[i] == searchPattern[^1] && searchPattern[^1] != searchPattern[^2]){
-                        result++;
-                        for (int ii = i; ii < input.Length; ii++){
-                            for (int jj = 0; jj < searchPattern.Length && jj < input.Length && ii < input.Length; j++){
-                                if (input[ii] == searchPattern[jj]){
-                                    ii++;
-                                    if (input[ii] == searchPattern[^1] && ii < input.Length){
-                                        throw new InvalidOperationException(
-                                            "Value should not be intersected with itself");
+                    if (i<input.Length && searchPattern.Length >= 2 && input[i] == searchPattern[^1]){
+                        if (searchPattern[^1] != searchPattern[^2]){
+                            result++;
+                            for (int ii = i; ii < input.Length; ii++){
+                                for (int jj = 0;
+                                     jj < searchPattern.Length && jj < input.Length && ii < input.Length;
+                                     j++){
+                                    if (input[ii] == searchPattern[jj]){
+                                        ii++;
+                                        if (input[ii] == searchPattern[^1] && ii < input.Length){
+                                            throw new InvalidOperationException(
+                                                "Value should not be intersected with itself");
+                                        }
                                     }
-                                }
-                                else{
-                                    break;
+                                    else{
+                                        break;
+                                    }
                                 }
                             }
                         }
+                        else{
+                            Label:
+                            i++;
+                            j++;
+                            if (input[i] == searchPattern[j] 
+                                && input.ElementAtOrDefault(i + 1) == searchPattern.ElementAtOrDefault(j + 1)){
+                                result++;
+                            }
+                            else{
+                                goto Label;
+                            }
+                        }
+                    }
+                    else{
+                        i++;
                     }
                 }
             }
+
+            
         }
 
 
