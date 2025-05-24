@@ -63,7 +63,7 @@ class Program{
                             Label:
                             i++;
                             j++;
-                            if (input[i] == searchPattern[j] 
+                            if ( input.ElementAtOrDefault[i] == searchPattern.ElementAtOrDefault[j]// 
                                 && input.ElementAtOrDefault(i + 1) == searchPattern.ElementAtOrDefault(j + 1)){
                                 result++;
                             }
