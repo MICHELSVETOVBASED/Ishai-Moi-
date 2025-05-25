@@ -72,7 +72,7 @@ public class NoobCodersDatabase{
         }
 
         public void Dispose(){
-            // Реализация Dispose
+            // Реализация Dispose//
         }
     }
 }
