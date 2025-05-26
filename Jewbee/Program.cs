@@ -68,7 +68,7 @@ class Program{
                                 result++;
                             }
                             else{
-                                goto Label;
+                                goto Label;//
                             }
                         }
                     }
