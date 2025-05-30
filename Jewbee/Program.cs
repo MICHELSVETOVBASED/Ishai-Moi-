@@ -1,18 +1,13 @@
-﻿using System.Net;
-using System.Collections.Generic;
-using System.Data;
-using System.Runtime.ExceptionServices;
-using System.IO;
-using System.Runtime.InteropServices;
-using System.Data.SqlTypes;
+﻿using System;
+using System.Linq;
+
 using System.Data.SqlClient;
-using System.Reflection.Emit;
-using Microsoft.SqlServer.Server;
+
 
 namespace Jewbee;
 class Program{
     static void Main(string[] args){
-        Console.WriteLine(CountOccurences("abbcaaageabb", "aaa"));
+        Console.WriteLine(CountOccurences("abcdefgcdefg ", "cde"));
 
     }
     public static int CountOccurences(string input, string searchPattern){
@@ -63,12 +58,12 @@ class Program{
                             Label:
                             i++;
                             j++;
-                            if ( input.ElementAtOrDefault[i] == searchPattern.ElementAtOrDefault[j]// 
+                            if ( input.ElementAtOrDefault(i) == searchPattern.ElementAtOrDefault(j)
                                 && input.ElementAtOrDefault(i + 1) == searchPattern.ElementAtOrDefault(j + 1)){
                                 result++;
                             }
                             else{
-                                goto Label;////
+                                goto Label;//
                             }
                         }
                     }
@@ -122,13 +117,13 @@ class Program{
         }
         catch (UnauthorizedAccessException ex){
             Console.WriteLine(ex.Message);
-            throw;//modmod
+            throw;
         }
         finally{
             dbContext.Dispose();
         }
         return user;
-    }//ddddd
+    }
 }
 
 public class NoobCodersUser{
