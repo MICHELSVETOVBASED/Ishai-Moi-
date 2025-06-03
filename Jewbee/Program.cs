@@ -1,40 +1,69 @@
-﻿using System;
-using System.Linq;
+﻿using System.Data.SqlClient;
 
-using System.Data.SqlClient;
+using System.Reflection.Metadata.Ecma335;
+using System.Threading;
+using System.Runtime;
 
 
 namespace Jewbee;
-class Program{
-    static void Main(string[] args){
-        Console.WriteLine(CountOccurences("abcdefgcdefg ", "cde"));
 
+class Program{
+    static void Main(){
+        Solution.Generate(Convert.ToInt32(Console.ReadLine()));
     }
+    
+    public class Solution {
+        public static IList<IList<int>> Generate(int numRows){
+            if (numRows <1 || numRows >30)
+                throw new Exception("more than 1 less than 30");
+            
+            var resultList = new List<IList<int>>(numRows);
+            resultList.Add([1]);
+            
+            for (var i = 2; i <= numRows && numRows != 1; i++){
+                var list = new List<int>(new int[i]);
+                var previousList = resultList[i-2];
+                HalfFilling(ref list, previousList);
+                resultList.Add(list);
+            }
+            Console.WriteLine(String.Join(", ", resultList[numRows-1].ToArray()));
+            return resultList;
+        }
+
+        private static void HalfFilling(ref List<int> list, IList<int>previousList){
+            list[0] = 1;
+            list[^1] = 1;
+            for (var i = 1; i <= list.Count-2; i++){
+                list[i] = previousList[i - 1] + previousList[i];
+            }
+        }
+    }
+    
+    
+
+#region CountOccurences    
+
+    
+
+    
     public static int CountOccurences(string input, string searchPattern){
         /*if ((new string[]{ input, searchPattern }.Any(x => x == null))){
             throw new ArgumentException("Value cannot be null");//
         }*/
-        try{
-            ArgumentNullException.ThrowIfNull(input, nameof(input));
-            ArgumentNullException.ThrowIfNull(searchPattern, nameof(searchPattern));
-        }
-        catch (ArgumentNullException){
-            throw new ArgumentNullException("Value cannot be null");
-        }
-
+        ArgumentNullException.ThrowIfNull(input, nameof(input));
+        ArgumentNullException.ThrowIfNull(searchPattern, nameof(searchPattern));
         if (new string[]{ input, searchPattern }.Any(x => x == "")){
             throw new ArgumentException("Value cannot be empty");
         }
-
         if (searchPattern.Length > input.Length)
             throw new InvalidOperationException("Search pattern can not be longer than input");
-        
-        
+
+
         int result = 0;
         for (int i = 0; i < input.Length; i++){
-            for (int j = 0; j < searchPattern.Length && j < input.Length && i <input.Length; j++){
+            for (int j = 0; j < searchPattern.Length && j < input.Length && i < input.Length; j++){
                 if (input[i] == searchPattern[j]){
-                    if (i<input.Length && searchPattern.Length >= 2 && input[i] == searchPattern[^1]){
+                    if (i < input.Length && searchPattern.Length >= 2 && input[i] == searchPattern[^1]){
                         if (searchPattern[^1] != searchPattern[^2]){
                             result++;
                             for (int ii = i; ii < input.Length; ii++){
@@ -58,12 +87,12 @@ class Program{
                             Label:
                             i++;
                             j++;
-                            if ( input.ElementAtOrDefault(i) == searchPattern.ElementAtOrDefault(j)
+                            if (input.ElementAtOrDefault(i) == searchPattern.ElementAtOrDefault(j)
                                 && input.ElementAtOrDefault(i + 1) == searchPattern.ElementAtOrDefault(j + 1)){
                                 result++;
                             }
                             else{
-                                goto Label;//
+                                goto Label;
                             }
                         }
                     }
@@ -72,16 +101,13 @@ class Program{
                     }
                 }
             }
-
-            
         }
 
 
         return result;
-        
     }
-
-    public static NoobCodersUser CreateUser(string name, string email){
+#endregion    
+    public static NoobCoders CreateUser1(string name, string email){
         // доработайте этот метод, добавив валидацию входных данных,
         // обработку и логирование ошибок
         ArgumentNullException.ThrowIfNull(name);
@@ -96,7 +122,7 @@ class Program{
         }
 
         var dbContext = NoobCodersDatabase.CreateContext();
-        NoobCodersUser user;
+        NoobCoders user;
         try{
             user = dbContext.CreateUser(name, email);
         }
@@ -104,14 +130,15 @@ class Program{
             if (ex.Message == "Cannot insert duplicated value"){
                 throw new InvalidOperationException("The user already added");
             }
+
             throw; // пробрасываем другие исключения выше
         }
         catch (NullReferenceException){
             Console.WriteLine("Internal error occurred. Retrying...");
-            try {
+            try{
                 user = dbContext.CreateUser(name, email);
             }
-            catch {
+            catch{
                 throw; // если вторая попытка тоже не удалась, пробрасываем исключение
             }
         }
@@ -122,11 +149,57 @@ class Program{
         finally{
             dbContext.Dispose();
         }
+
         return user;
     }
 }
 
-public class NoobCodersUser{
+public class NoobCoders{
+    public static async Task LoadDataAsync(CancellationToken token){
+        
+        try{
+            var message = await GetMessageAsync(token);
+            Console.WriteLine(message);
+        }
+        catch (OperationCanceledException e) when (e.CancellationToken == token){
+            Console.WriteLine(e.Message);
+            throw;
+        }
+        catch (Exception e){
+            Console.WriteLine(e.Message);
+        }
+        
+    }
+    private static Task<string> GetMessageAsync(CancellationToken token){
+        return Task.FromResult("Hi, noobcoders! ;)");
+    }
+
+    public static async Task<NoobCoders> CreateUser(string userName, string userEmail)
+        {
+            var user = new NoobCoders(userName, userEmail);
+            var createdUser = await NoobCoders.AddUser(user);
+            return createdUser;
+        }
+    public NoobCoders(string name, string email){
+        
+    }
+
+    public NoobCoders(){
+    }
+
+    public static async Task<NoobCoders> AddUser(NoobCoders user){
+        await Task.Delay(2000);
+        return await Task<NoobCoders>.FromResult(user);
+    }
+
+    public static Task<string> GetMessageAsync(){
+        return Task.FromResult("hi, noobcoders! =)");
+    }
+
+    public static async Task LoadDataAsync(){
+        var message = await GetMessageAsync();
+        Console.WriteLine(message);
+    }
 }
 
 public class NoobCodersDatabase{
@@ -135,9 +208,11 @@ public class NoobCodersDatabase{
     }
 
     public class DbContext : IDisposable{
-        public NoobCodersUser CreateUser(string name,string email){
-            return new NoobCodersUser();
+        public NoobCoders CreateUser(string name, string email){
+            return new NoobCoders();
         }
+
+        
 
         public void Dispose(){
             // Реализация Dispose//
