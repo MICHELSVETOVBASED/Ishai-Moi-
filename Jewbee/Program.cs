@@ -1,18 +1,50 @@
 ﻿using System.Data.SqlClient;
-
+using System.Reflection;
 using System.Reflection.Metadata.Ecma335;
 using System.Threading;
 using System.Runtime;
+using System.Text;
 
 
 namespace Jewbee;
 
 class Program{
-    static void Main(){
-        Solution.Generate(Convert.ToInt32(Console.ReadLine()));
-    }
-    
+    public static void Main(){
+
+        Console.WriteLine(Solution.LongestCommonPrefix(["flower","flow","flight"]));
+}
     public class Solution {
+        public static string LongestCommonPrefix(string[] strs){
+            var dict = new List<IDictionary<List<char>, int>>(); 
+            List<IList<char>> result = new List<IList<char>>();
+            for (var i = 0 ; i < strs.Length; i++){
+                var list = new List<char>();          
+                for (var j = 0; j < strs.Min(inn => inn.Length); j++){//to the littlest word
+                    var firstMatch = strs[i][j];
+                    for (var ii = 0; ii < strs.Length-1; ii++){
+                        if (firstMatch != strs[ii+1][j] || i==ii+1 ){
+                            continue;
+                        }
+                        list.Add(firstMatch);
+                        break;
+                    }
+                }
+                if (list.Count != 0){
+                    result.Add(list);
+                }
+
+            }
+
+            return string.Join("", result.MaxBy(list => list.Count) ?? new List<char>());
+        }
+
+        static char StartPassWords(string[] strs,char c){
+            for (var i = 0; i < strs.Length; i++){
+                
+            }
+
+            return 'o';
+        }
         public static IList<IList<int>> Generate(int numRows){
             if (numRows <1 || numRows >30)
                 throw new Exception("more than 1 less than 30");
@@ -38,6 +70,63 @@ class Program{
             }
         }
     }
+    
+    public static void PrintNumber(){
+        string? line = Console.ReadLine(); // ввод числа в десятеричной системе 
+        int x = int.Parse(line);
+
+        var result = new List<object>();
+        
+        if (x > 16){
+            var division = x % 16;
+            x /= 16;
+            result.Add(division);
+            
+            for (;;){
+                
+                division = x%16;
+                x /= 16;
+                result.Add(division);
+                if (x<16){
+                    result.Add(x);
+                    break;
+                }
+            }
+        }
+        else{
+            result.Add(x);
+        }
+
+        for (var i = 0; i < result.Count; i++){
+            switch (result[i]){
+                case(10):
+                    result[i] = "a";
+                    break;
+                case(11):
+                    result[i] = "b";
+                    break;
+                case(12):
+                    result[i] = "c";
+                    break;
+                case(13):
+                    result[i] = "d";
+                    break;
+                case(14):
+                    result[i] = "e";
+                    break;
+                case(15):
+                    result[i] = "f";
+                    break;
+                default:
+                    continue;
+            }
+        }
+
+        Console.WriteLine(String.Join("", result.Select(y => y.ToString()).Reverse()));
+    }
+    
+
+    
     
     
 
