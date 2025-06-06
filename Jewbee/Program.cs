@@ -1,19 +1,103 @@
-﻿using System.Data.SqlClient;
+﻿using System.ComponentModel.Design;
+using System.Data.SqlClient;
 using System.Reflection;
 using System.Reflection.Metadata.Ecma335;
 using System.Threading;
 using System.Runtime;
+using System.Runtime.InteropServices.JavaScript;
 using System.Text;
+using System.Linq;
+using System.Collections.Generic;
 
 
 namespace Jewbee;
 
 class Program{
     public static void Main(){
+        Console.WriteLine(Solution.RobotWithString("bddax`")); //bdevfziy
+    }
 
-        Console.WriteLine(Solution.LongestCommonPrefix(["flower","flow","flight"]));
-}
+
+
     public class Solution {
+        public static string RobotWithString(string s){
+            var vowels = new HashSet<char> { 'a', 'e', 'i', 'o', 'u' };
+            var consonants = new HashSet<char> { 'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm',
+                'n', 'p', 'q', 'r', 's', 't', 'v', 'x' };
+            var ss = s.ToList();
+            var t = new Stack<char>();
+            var p = "";
+            
+            var i = 0;
+            for (; i < ss.Count; i++){
+                t.Push(ss[i]);
+                if (ss.Count > 1  && t.Peek() > ss.Skip(i + 1).DefaultIfEmpty(char.MaxValue).Min()){
+                    ss.RemoveAt(i--);
+                }
+                else{
+                    if (t.Peek() <= ss.Skip(i+1).DefaultIfEmpty(char.MaxValue).Min()){
+                        p += t.Pop();
+                        ss.RemoveAt(i--);
+                        for (var l = 0; l < t.Count; l++){
+                            if (t.Peek() <= ss.DefaultIfEmpty(char.MaxValue).Min())
+                                p += t.Pop();
+                        }
+                        continue;
+                    }
+                    if (ss.Count != 1) continue;
+                    ss.RemoveAt(i);
+                    return p += RevertPass(new string(t.Reverse().ToArray()));
+                    
+                }
+            
+                
+            }
+            if(t.Count != 0)
+                return p += RevertPass(new string(t.Reverse().ToArray()));
+            return p;
+        }
+
+        private static string RevertPass(string t){
+            var fluxedT = "";
+            for (var i = t.Length-1; i >= 0; i--){
+                fluxedT += t[i];
+            }
+
+            return fluxedT;
+        }
+        public static string ClearDigits(string s){
+            for (var i = s.Length - 1; i >= 0; i--){
+                if (char.IsDigit(s[i])){
+                    for (var j = i; j >= 0; j--){
+                        if (!char.IsDigit(s[j])){
+                            s = s.Remove(j, 1);
+                            if (i - 1 >= 0)
+                                i--;
+                            break;
+                        }
+                    }
+
+                    if (char.IsDigit(s[0]) && s.Length == 1)
+                        s = "";
+                    if(s!="")
+                        s = s.Remove(i, 1);
+                }
+
+            }
+            return s;
+        }
+        public static int NumberOfSteps(int num){
+            var count = 0;
+            if (num == 0) return 0;
+            while (num != 0){
+                if (num % 2 == 0)
+                    num /= 2;
+                else
+                    num--;
+                count++;
+            }
+            return count;
+        }
         public static string LongestCommonPrefix(string[] strs){
             var dict = new List<IDictionary<List<char>, int>>(); 
             List<IList<char>> result = new List<IList<char>>();
@@ -70,7 +154,7 @@ class Program{
             }
         }
     }
-    
+       
     public static void PrintNumber(){
         string? line = Console.ReadLine(); // ввод числа в десятеричной системе 
         int x = int.Parse(line);
@@ -242,6 +326,8 @@ class Program{
         return user;
     }
 }
+
+
 
 public class NoobCoders{
     public static async Task LoadDataAsync(CancellationToken token){
