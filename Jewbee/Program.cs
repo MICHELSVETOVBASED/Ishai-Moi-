@@ -14,12 +14,70 @@ namespace Jewbee;
 
 class Program{
     public static void Main(){
-        Console.WriteLine(Solution.RobotWithString("bddax`")); //bdevfziy
+       Console.WriteLine(Solution.ClearStars("edd*"));//de 
+       
     }
 
 
 
     public class Solution {
+        public static string ClearStars(string s) {
+            Stack<int>[] cnt = new Stack<int>[26];
+            for (int i = 0; i < 26; i++) {
+                cnt[i] = new Stack<int>();
+            }
+            char[] arr = s.ToCharArray();
+            for (int i = 0; i < arr.Length; i++) {
+                if (arr[i] != '*') {
+                    cnt[arr[i] - 'a'].Push(i);
+                } else {
+                    for (int j = 0; j < 26; j++) {
+                        if (cnt[j].Count > 0) {
+                            arr[cnt[j].Pop()] = '*';
+                            break;
+                        }
+                    }
+                }
+            }
+            return new string(Array.FindAll(arr, c => c != '*'));
+        }
+        public static string ClearStars1(string s){
+            if (s.Length is < 1 or > 100000)
+                throw new Exception("Err");
+                
+                
+            var list = new List<char>(s.ToCharArray());
+            if (!s.Contains('*')){
+                return s;
+            }
+            for (var i = 0; i < list.Count; i++){
+                if (list[i] != '*')
+                    continue;
+                list.RemoveAt(i);
+                var list1 = list.Take(i>= 0 ? i : 0).Reverse().ToList();
+                list.RemoveRange(0, i);
+                i = 0;
+                if (list1.Count == 1)
+                    continue;
+                var minest = list1.Min();
+                list1.Remove(list1.FirstOrDefault(x => x == minest));
+                list1.Reverse();
+                list.InsertRange(0,list1);
+            }
+            /*if (!list1.Contains('*')){
+           for (var m = 0; m < list1.Count; m++){
+               if (m >= list1.Count - 1)
+                   continue;
+               if (list1[m] > list1[m + 1]){
+                   (list1[m], list1[m + 1]) = (list1[m + 1], list1[m]);
+                   m = 0;
+               }
+           }
+       }*/
+            
+            
+            return string.Join("",list);
+        }
         public static string RobotWithString(string s){
             var vowels = new HashSet<char> { 'a', 'e', 'i', 'o', 'u' };
             var consonants = new HashSet<char> { 'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm',
