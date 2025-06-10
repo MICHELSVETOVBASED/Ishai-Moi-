@@ -8,19 +8,146 @@ using System.Runtime.InteropServices.JavaScript;
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;
+using static Jewbee.Program.Solution;
 
 
 namespace Jewbee;
 
 class Program{
     public static void Main(){
-       Console.WriteLine(Solution.ClearStars("edd*"));//de 
-       
+        Console.WriteLine(new Solution().MaxDifference("mmsmsym"));
     }
 
 
+    public class Solution{ 
+        public int MaxDifference(string s){
+            var dick = new Dictionary<char, int>();
+            foreach (var x in s){
+                if (!dick.ContainsKey(x)){
+                    dick.Add(x, 1);
+                }
+                else{
+                    dick[x] = 1 + dick[x];
+                }
+            }
 
-    public class Solution {
+            var res = (from p in dick orderby p.Value descending select p.Value).ToArray();
+
+            var stack = new Stack<int>();
+            var bl = false;
+            var bl1 = false;
+            foreach (var t in res){
+                if (t % 2 == 0){
+                    if (!bl){
+                        stack.Push(t);
+                        bl = true;
+                    }
+                }
+                if(t%2 != 0)
+                    if (!bl1){
+                        stack.Push(t);
+                        bl1 = true;
+                    }
+
+                if (stack.Count == 2)
+                    break;
+            }
+
+            if (!bl)
+                return 0 - stack.Peek();
+            if (!bl1)
+                return stack.Peek();
+
+            var even = stack.First(x => x % 2 == 0);
+            var odd = stack.First(x => x % 2 != 0);
+            return odd - even;
+        }
+        public int FindKthNumber(int n, int k_int) { // Переименовал k во входных данных
+            long k = k_int; // Теперь k внутри метода - long
+            long current = 1;
+            k--;
+
+            while (k > 0) {
+                long steps = CountSteps(n, current, current + 1);
+
+                if (k >= steps) {
+                    k -= steps;     // Теперь это long -= long, что корректно
+                    current++;
+                } else {
+                    k--;
+                    current *= 10;
+                }
+            }
+            return (int)current;
+        }
+        
+
+        // Вспомогательная функция для подсчета количества чисел в поддереве
+        // 'current' - начальное число (префикс)
+        // 'next' - следующее число в том же разряде (current + 1)
+        private static long CountSteps(int n, long current, long next) {
+            long steps = 0;
+            while (current <= n) {
+                steps += Math.Min(n - current + 1, next - current);
+                current *= 10;
+                next *= 10;
+            }
+            return steps;
+        }
+        private IList<int> list;
+        public IList<int> InorderTraversal(TreeNode root){
+            list = new List<int>();
+            InorderHelper(root);
+            return list;
+        }
+
+        private void InorderHelper(TreeNode node){
+            if (node == null)
+                return;
+            InorderHelper(node.left);
+
+            list.Add(node.val);
+
+            InorderHelper(node.right);
+        }
+        public class TreeNode(int val = 0, TreeNode left = null, TreeNode right = null){
+            public int val = val;
+            public TreeNode left = left;
+            public TreeNode right = right;
+        }
+        List<int> result;
+        public IList<int> LexicalOrder1(int n)  {
+            result = new List<int>();
+            for(var i = 1;i<10;i++){
+                Get(i,n);
+            }
+            return result;
+        }
+
+        private void Get(int num , int n){
+            if(num>n){
+                return;
+            }
+            result.Add(num);
+            for(var i = 0;i<=9 && num*10+i<=n;i++){
+                Get((num*10)+i,n);
+            }
+       
+        }
+        public IList<int> LexicalOrder(int n){
+            
+            var stack = new Stack<int>[n];
+            var list = Enumerable.Range(1, n).ToList();
+            var list1 = list.Select(x => x.ToString())
+                .OrderBy(s => s)
+                .Select(int.Parse)
+                .ToList();
+            /*for (var i = 0; i< list.Count; i++){
+                stack[list[i] -'1'].Push(i);
+            }*/
+
+            return list1;
+        }
         public static string ClearStars(string s) {
             Stack<int>[] cnt = new Stack<int>[26];
             for (int i = 0; i < 26; i++) {
@@ -180,13 +307,7 @@ class Program{
             return string.Join("", result.MaxBy(list => list.Count) ?? new List<char>());
         }
 
-        static char StartPassWords(string[] strs,char c){
-            for (var i = 0; i < strs.Length; i++){
-                
-            }
-
-            return 'o';
-        }
+        
         public static IList<IList<int>> Generate(int numRows){
             if (numRows <1 || numRows >30)
                 throw new Exception("more than 1 less than 30");
@@ -388,6 +509,9 @@ class Program{
 
 
 public class NoobCoders{
+    public string Name{ get; }
+    public string Email{ get; }
+
     public static async Task LoadDataAsync(CancellationToken token){
         
         try{
@@ -413,19 +537,20 @@ public class NoobCoders{
             var createdUser = await NoobCoders.AddUser(user);
             return createdUser;
         }
-    public NoobCoders(string name, string email){
-        
+    private NoobCoders(string name, string email){
+        Name = name;
+        Email = email;
     }
 
     public NoobCoders(){
     }
 
-    public static async Task<NoobCoders> AddUser(NoobCoders user){
+    private static async Task<NoobCoders> AddUser(NoobCoders user){
         await Task.Delay(2000);
         return await Task<NoobCoders>.FromResult(user);
     }
 
-    public static Task<string> GetMessageAsync(){
+    private static Task<string> GetMessageAsync(){
         return Task.FromResult("hi, noobcoders! =)");
     }
 
@@ -435,7 +560,7 @@ public class NoobCoders{
     }
 }
 
-public class NoobCodersDatabase{
+public static class NoobCodersDatabase{
     public static DbContext CreateContext(){
         return new DbContext();
     }
