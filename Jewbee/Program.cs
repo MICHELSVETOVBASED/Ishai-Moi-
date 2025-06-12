@@ -1,25 +1,98 @@
-﻿using System.ComponentModel.Design;
-using System.Data.SqlClient;
-using System.Reflection;
-using System.Reflection.Metadata.Ecma335;
-using System.Threading;
-using System.Runtime;
-using System.Runtime.InteropServices.JavaScript;
-using System.Text;
-using System.Linq;
-using System.Collections.Generic;
-using static Jewbee.Program.Solution;
+﻿using System.Data.SqlClient;
+
 
 
 namespace Jewbee;
 
-class Program{
+internal static class Program{
     public static void Main(){
-        Console.WriteLine(new Solution().MaxDifference("mmsmsym"));
+        Console.WriteLine(new Solution().MaxAdjacentDistance([-2,1,-5]));
     }
+    
+    
+    public class Solution{
+        public int MaxAdjacentDistance(int[] nums){
+            var stack = new Stack<int>();
+            for (var i = 0; i < nums.Length; i++){
+                if(i==0) {
+                    stack.Push(nums[0]-nums[^1]);
+                    stack.Push(nums[0] - nums[1]);
+                    continue;
+                    
+                }
+                if (i == nums.Length - 1){
+                    stack.Push(nums[i] - nums[i - 1]);
+                    stack.Push(nums[^1] - nums[0]);
+                    return stack.Max();
+                }
 
+                stack.Push(nums[i] - nums[i - 1]);
+                stack.Push(nums[i] - nums[i + 1]);
+            }
 
-    public class Solution{ 
+            return 0;
+        }
+        
+        private Dictionary<char, int> freq;
+        string sub = "";
+        
+        public int MaxDifference1(string s,int k){
+            var stack = new Stack<int>();
+            var stack1 = new Stack<int>();
+            var previous = k;
+            var bl = false;
+            if (s.Length < k)
+                throw new Exception("Err");
+            if (s.Length == k){
+                sub = s.Substring(0, k);
+                ToCollect(ref stack,ref stack1,ref bl);
+            }
+            
+
+            for (var  j = 0; k+j < s.Length; j++){
+                for (var l = k;l+1<s.Length && j+l<s.Length; l++){
+                    var ss = s.Substring(j, l + 1);
+                    if (s[l] == s[l + 1] || ss.Any(c=>c==s[l+1])){
+                        k++;
+                        continue;
+                    }
+                    break;
+                }
+                
+                if ( k< s.Length-j)
+                    sub = s.Substring(j, k+1);
+                else{
+                    sub = s.Substring(j, k);
+                }
+                k = previous;
+                ToCollect(ref stack,ref stack1, ref bl);
+            }
+
+            return bl ? stack.Max() : stack1.Max();
+
+        }
+
+        private void ToCollect(ref Stack<int>stack, ref Stack<int>stack1, ref bool bl){
+            freq = new Dictionary<char, int>();
+           
+            foreach (var t in sub){
+                if (!freq.TryGetValue(t, out var value))
+                    freq.Add(t,1);
+                else
+                    freq[t] = ++value;
+            }
+            var res = (from p in freq orderby p.Value descending select p.Value).ToArray();
+            var odd = res.FirstOrDefault(x => x % 2 != 0);
+            var even = res.FirstOrDefault(x => x % 2 == 0);
+            if (even != 0 && odd != 0){
+                stack.Push(odd - even);
+                bl = true;
+            }
+            else{
+                stack1.Push(odd - even);
+            }
+            freq.Clear();
+        }
         public int MaxDifference(string s){
             var dick = new Dictionary<char, int>();
             foreach (var x in s){
