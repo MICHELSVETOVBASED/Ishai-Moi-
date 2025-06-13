@@ -1,36 +1,40 @@
 ﻿using System.Data.SqlClient;
-
+using static System.Math;
 
 
 namespace Jewbee;
 
 internal static class Program{
     public static void Main(){
-        Console.WriteLine(new Solution().MaxAdjacentDistance([-2,1,-5]));
+        Console.WriteLine(new Solution().MinimizeMax([-2,1,-5],1));
     }
     
     
     public class Solution{
-        public int MaxAdjacentDistance(int[] nums){
-            var stack = new Stack<int>();
-            for (var i = 0; i < nums.Length; i++){
-                if(i==0) {
-                    stack.Push(nums[0]-nums[^1]);
-                    stack.Push(nums[0] - nums[1]);
-                    continue;
-                    
+        
+        public int MinimizeMax(int[] nums, int p) {
+            Array.Sort(nums);
+            int left = 0, right = nums[^1] - nums[0];
+            while (left < right) {       
+                int mid = (right + left) / 2;
+                int r = CountPairs(nums, mid);
+                if (r >= p) {
+                    right = mid;
+                } else {
+                    left  = mid + 1;
                 }
-                if (i == nums.Length - 1){
-                    stack.Push(nums[i] - nums[i - 1]);
-                    stack.Push(nums[^1] - nums[0]);
-                    return stack.Max();
-                }
-
-                stack.Push(nums[i] - nums[i - 1]);
-                stack.Push(nums[i] - nums[i + 1]);
             }
-
-            return 0;
+            return left;
+        }
+        int CountPairs(int[] nums, int diff) {
+            int result = 0;
+            for (int i = 0; i < nums.Length-1; i++) {
+                if (nums[i+1] - nums[i] <= diff) {
+                    result++;
+                    i++;
+                }
+            }
+            return result;
         }
         
         private Dictionary<char, int> freq;
