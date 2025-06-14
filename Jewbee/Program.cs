@@ -38,7 +38,7 @@ internal static class Program{
         }
         
         private Dictionary<char, int> freq;
-        string sub = "";
+        string sub = "";//
         
         public int MaxDifference1(string s,int k){
             var stack = new Stack<int>();
