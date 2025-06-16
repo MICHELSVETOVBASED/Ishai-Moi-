@@ -24,7 +24,7 @@ internal static class Program{
                     left  = mid + 1;
                 }
             }
-            return left;
+            return left;//
         }
         int CountPairs(int[] nums, int diff) {
             int result = 0;
