@@ -1,4 +1,5 @@
-﻿using System.Data.SqlClient;
+﻿using System.Collections;
+using System.Data.SqlClient;
 using static System.Math;
 
 
@@ -6,11 +7,32 @@ namespace Jewbee;
 
 internal static class Program{
     public static void Main(){
-        Console.WriteLine(new Solution().MinimizeMax([-2,1,-5],1));
+        Console.WriteLine(new Solution().DivideArray([1, 3, 4, 8, 7, 9, 3, 5, 1], 2));
+                                                        //1, 1 , 3, 3, 4, 5 , 7, 8, 9
+
     }
     
     
     public class Solution{
+        public int[][] DivideArray(int[] nums, int k){
+            var result = new int[nums.Length];
+            for (var i = 0; i < nums.Length-1; i++){
+                if (nums[i] <= nums[i + 1])
+                    continue;
+                (nums[i], nums[i + 1]) = (nums[i + 1], nums[i]);
+                DivideArray(nums, k);
+            }
+
+            if (nums.Length % 3 != 0)
+                return [];
+            var mid = 
+            for (int i = 0, j = mid; i < mid; i++){
+                var stack = new Stack<int>(3);
+                
+            }
+            
+        return [];
+        }
         
         public int MinimizeMax(int[] nums, int p) {
             Array.Sort(nums);
@@ -24,7 +46,7 @@ internal static class Program{
                     left  = mid + 1;
                 }
             }
-            return left;////
+            return left;
         }
         int CountPairs(int[] nums, int diff) {
             int result = 0;
