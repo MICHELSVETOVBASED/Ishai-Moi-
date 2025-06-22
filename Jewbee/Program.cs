@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Data.SqlClient;
+using System.Text;
 using static System.Math;
 
 
@@ -7,34 +8,83 @@ namespace Jewbee;
 
 internal static class Program{
     public static void Main(){
-        Console.WriteLine(new Solution().DivideArray([1, 3, 4, 8, 7, 9, 3, 5, 1], 2));
-                                                        //1, 1 , 3, 3, 4, 5 , 7, 8, 9
-
+        Console.WriteLine(new Solution().DivideString("abcdefghi", 1,'x'));
+        
     }
     
     
     public class Solution{
-        public int[][] DivideArray(int[] nums, int k){
-            var result = new int[nums.Length];
-            for (var i = 0; i < nums.Length-1; i++){
-                if (nums[i] <= nums[i + 1])
+        public string[] DivideString(string s, int k, char fill){
+            var list = new List<string>();
+            for (var i = 0; i < s.Length;){
+                if (i == s.Length - 1){
+                    var sb = new StringBuilder();
+                    sb.Append(s[i]);
+                    for (; temp < k; temp++){
+                        sb.Append(fill);
+                    }
+                    list.Add(sb.ToString());
                     continue;
-                (nums[i], nums[i + 1]) = (nums[i + 1], nums[i]);
-                DivideArray(nums, k);
+                }
+                var postsb = new StringBuilder();
+                for (var j = 0; j < k; j++){
+                var temp = 0;
+                    postsb.Append(s[i]);
+                    i++;
+                }
+                list.Add(postsb.ToString());
+            }
+            return list.ToArray();
+        }
+        public int PartitionArray(int[] nums, int k){
+            Array.Sort(nums);
+            if(nums.Length is < 1 or > 100000 || nums.Any(x => x is < 0 or > 100000 
+               || k is < 0 or > 100000))
+                throw new Exception("Err");
+                
+            var result = new List<List<int>>();
+            var stack = new Stack<int>();
+            for (var i = 0; i < nums.Length; i++){
+                if (i == nums.Length - 1){
+                    if (stack.Count != 0 && Abs(stack.Last() - nums[i]) > k){
+                        result.Add(stack.ToArray().ToList());
+                        stack.Clear();
+                    }
+                    
+                    stack.Push(nums[i]);
+                    result.Add(stack.ToArray().ToList());
+                    break;
+                }
+                if (stack.Count != 0 && Abs(stack.Last() - nums[i + 1]) > k){
+                    if (Abs(stack.Last() - nums[i]) > k){
+                        result.Add(stack.ToArray().ToList());
+                        stack.Clear();
+                    }
+
+                    stack.Push(nums[i]);
+                    if (i < nums.Length - 1){
+                        if (nums[i] == nums[i + 1]){
+                            continue;
+                        }
+                    }
+                    if (Abs(nums[i] - nums[i + 1]) <= k)
+                        continue;
+
+                    
+                    result.Add(stack.ToArray().ToList());
+                    
+                    stack.Clear();
+                    continue;
+                }
+
+                stack.Push(nums[i]);
             }
 
-            if (nums.Length % 3 != 0)
-                return [];
-            var mid = 
-            for (int i = 0, j = mid; i < mid; i++){
-                var stack = new Stack<int>(3);
-                
-            }
-            
-        return [];
+            result.ForEach(x => Console.WriteLine(string.Join(", ", x)));
+            return result.Count;
         }
-        
-        public int MinimizeMax(int[] nums, int p) {
+
+            public int MinimizeMax(int[] nums, int p) {
             Array.Sort(nums);
             int left = 0, right = nums[^1] - nums[0];
             while (left < right) {       
