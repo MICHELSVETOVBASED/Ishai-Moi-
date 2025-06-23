@@ -14,28 +14,8 @@ internal static class Program{
     
     
     public class Solution{
-        public string[] DivideString(string s, int k, char fill){
-            var list = new List<string>();
-            for (var i = 0; i < s.Length;){
-                if (i == s.Length - 1){
-                    var sb = new StringBuilder();
-                    sb.Append(s[i]);
-                    for (; temp < k; temp++){
-                        sb.Append(fill);
-                    }
-                    list.Add(sb.ToString());
-                    continue;
-                }
-                var postsb = new StringBuilder();
-                for (var j = 0; j < k; j++){
-                var temp = 0;
-                    postsb.Append(s[i]);
-                    i++;
-                }
-                list.Add(postsb.ToString());
-            }
-            return list.ToArray();
-        }
+        
+        
         public int PartitionArray(int[] nums, int k){
             Array.Sort(nums);
             if(nums.Length is < 1 or > 100000 || nums.Any(x => x is < 0 or > 100000 
