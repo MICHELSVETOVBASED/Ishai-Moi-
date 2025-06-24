@@ -8,14 +8,30 @@ namespace Jewbee;
 
 internal static class Program{
     public static void Main(){
-        Console.WriteLine(new Solution().DivideString("abcdefghi", 1,'x'));
+        Console.WriteLine(String.Join(", " , new Solution().FindKDistantIndices([2,2,2,2,2], 2,2)));
         
     }
     
     
     public class Solution{
         
-        
+        public IList<int> FindKDistantIndices(int[] nums, int key, int k){
+            var list = new List<int>();
+            var arr = nums
+                .Select((x, i) => new{ x, i })
+                .Where(x => x.x == key)
+                .Select(x => x.i)
+                .ToList();
+            for (int  i = 0, j = 0; i < nums.Length; i++){
+                if (Abs(i - arr[j]) <= k)
+                    list.Add(i); 
+                if ( arr.Count-1> j)
+                    if (i-1 == arr[j])
+                        j++;
+            }
+
+            return list;
+        }
         public int PartitionArray(int[] nums, int k){
             Array.Sort(nums);
             if(nums.Length is < 1 or > 100000 || nums.Any(x => x is < 0 or > 100000 
